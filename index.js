@@ -38,6 +38,14 @@ async function run() {
       res.send(result);
     });
 
+    //get specific todo id data
+    app.get("/data/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await todoCollection.findOne(query);
+      res.send(result);
+    });
+
     //get specific user todo data
     app.get("/data/:email", async (req, res) => {
       const query = { email: req.params.email };
@@ -49,6 +57,23 @@ async function run() {
     app.post("/data", async (req, res) => {
       const todoData = req.body;
       const result = await todoCollection.insertOne(todoData);
+      res.send(result);
+    });
+
+    //patch method for specific coupon update
+    app.patch("/updateTodo/:id", async (req, res) => {
+      const item = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          name: item.name,
+          description: item.description,
+          date: item.date,
+          priority: item.priority,
+        },
+      };
+      const result = await todoCollection.updateOne(filter, updatedDoc);
       res.send(result);
     });
 
